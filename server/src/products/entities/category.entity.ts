@@ -15,9 +15,9 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'ProductCategories',
+  tableName: 'Category',
 })
-export class ProductCategory extends Model {
+export class Category extends Model {
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
@@ -26,18 +26,15 @@ export class ProductCategory extends Model {
   id: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM(
+      'arte',
+      'antiguedades',
+      'coleccionables',
+      'tecnologia',
+      'vehiculos',
+      'bienes inmuebles',
+    ),
     allowNull: false,
-    unique: true,
   })
-  name: string;
-
-  @Column({
-    type: DataType.TEXT,
-    allowNull: false,
-  })
-  description: string;
-
-  @HasMany(() => Product)
-  products: Product[];
+  tipo: string;
 }

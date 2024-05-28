@@ -1,22 +1,12 @@
 import {
-  AfterCreate,
-  AfterUpdate,
-  BeforeCreate,
-  BeforeUpdate,
   BelongsTo,
-  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
-  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
-
-export enum StateProduct {
-  Active = 'publish',
-  Inactive = 'draft',
-}
+import { Category } from './category.entity';
 
 @Table({
   tableName: 'Products',
@@ -34,38 +24,32 @@ export class Product extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  title: string;
+  nombre: string;
 
   @Column({
     type: DataType.STRING,
   })
-  content: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  date: string;
+  descripcion: string;
 
   @Column({
     type: DataType.DOUBLE,
+    allowNull: false,
   })
-  price: number;
-
-  @Column({
-    type: DataType.INTEGER,
-  })
-  selled: number;
+  precio_inicial: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  product_categories: string;
+  imagen: string;
 
+  @ForeignKey(() => Category)
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
+    type: DataType.UUID,
+    allowNull: false,
   })
-  status: StateProduct;
+  category: string;
+
+  @BelongsTo(() => Category)
+  categoryEntity: Category;
 }
