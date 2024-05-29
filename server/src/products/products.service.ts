@@ -23,6 +23,14 @@ export class ProductsService {
     private categoryModel: typeof Category,
   ) {}
 
+  private async findProductOrFail(id: string) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    return product;
+  }
+
   async findAll() {
     try {
       const products = await Product.findAll();
@@ -91,11 +99,7 @@ export class ProductsService {
 
   async update(id: string, updateProductDto: UpdateProductDto) {
     try {
-      const product = await this.findOne(id);
-      if (!product) {
-        throw new NotFoundException('Product not found');
-      }
-
+      const product = await this.findProductOrFail(id);
       const errors = await validate(updateProductDto);
       if (errors.length > 0) {
         const errorMessages = errors
@@ -115,11 +119,7 @@ export class ProductsService {
 
   async partialUpdate(id: string, updateProductDto: Partial<UpdateProductDto>) {
     try {
-      const product = await this.findOne(id);
-      if (!product) {
-        throw new NotFoundException('Product not found');
-      }
-
+      const product = await this.findProductOrFail(id);
       await product.update(updateProductDto);
       return { success: true, data: product };
     } catch (error) {
@@ -130,11 +130,7 @@ export class ProductsService {
 
   async remove(id: string) {
     try {
-      const product = await this.findOne(id);
-      if (!product) {
-        throw new NotFoundException('Product not found');
-      }
-
+      const product = await this.findProductOrFail(id);
       await product.destroy();
       return { success: true, data: product };
     } catch (error) {
