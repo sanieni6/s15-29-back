@@ -27,14 +27,14 @@ export class Category extends Model {
 
   @Column({
     type: DataType.ENUM(
-      'arte',
-      'antiguedades',
-      'coleccionables',
-      'tecnologia',
-      'vehiculos',
-      'bienes inmuebles',
+      'art',
+      'antiques',
+      'collectibles',
+      'technology',
+      'vehicles',
+      'real estate',
     ),
     allowNull: false,
   })
-  tipo: string;
+  type: string;
 }
