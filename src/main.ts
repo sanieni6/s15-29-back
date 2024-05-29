@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { PORT } from './config/enviroments';
-const port = PORT ?? 3001;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,7 +16,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(port);
-  console.log('server raised in port: ' + port);
+  await app.listen(parseInt(process.env.PORT || '3001'));
 }
 bootstrap();
