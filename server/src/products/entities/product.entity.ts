@@ -7,11 +7,13 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Category } from './category.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Table({
   tableName: 'Products',
 })
 export class Product extends Model {
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -24,31 +26,31 @@ export class Product extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  nombre: string;
+  name: string;
 
   @Column({
     type: DataType.STRING,
   })
-  descripcion: string;
+  description: string;
 
   @Column({
     type: DataType.DOUBLE,
     allowNull: false,
   })
-  precio_inicial: number;
+  initial_price: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  imagen: string;
+  image: string;
 
   @ForeignKey(() => Category)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  category: string;
+  categoryId: string;
 
   @BelongsTo(() => Category)
   categoryEntity: Category;
