@@ -4,6 +4,7 @@ import * as env from '../config/enviroments';
 import { Product } from '../products/entities/product.entity';
 import { ProductCategory } from '../products/entities/productCategory.entity';
 import { AuctionType } from '../products/entities/auction.entity';
+import { User } from 'src/users/entities/users.entity';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AuctionType } from '../products/entities/auction.entity';
       username: env.DBUSERNAME,
       password: env.DBPASSWORD,
       database: env.DBDATABASE,
-      models: [ Product],
+      models: [ Product, User],
       autoLoadModels: true,
       synchronize: true,
       logging: false,
