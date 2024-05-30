@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { PORT } from './config/enviroments';
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
+  dotenv.config();
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .addBearerAuth()
