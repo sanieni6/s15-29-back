@@ -11,7 +11,7 @@ import {
 import { AuctionService } from './auction.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('auctions')
 @ApiTags('auctions')
@@ -20,6 +20,23 @@ export class AuctionController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new auction' })
+  @ApiBody({
+    description: 'Create a new auction',
+    schema: {
+      example: {
+        auctioneer: 'Pablo Benq',
+        initialBid: 2000,
+        currentBid: 5000,
+        currentBidClient: 'Fernando',
+        productId: 'c1ff912a-b7c4-4e10-9bb2-9b7b9ae641c0',
+        auctionType: [
+          'traditional auctions',
+          'direct purchase',
+          'judicial auctions',
+        ],
+      },
+    },
+  })
   @ApiResponse({ status: 200, description: 'Return a new auction.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createAuctionDto: CreateAuctionDto) {
@@ -43,6 +60,23 @@ export class AuctionController {
   }
 
   @Put(':id')
+  @ApiBody({
+    description: 'Update auction',
+    schema: {
+      example: {
+        auctioneer: 'Pablo Benq',
+        initialBid: 2000,
+        currentBid: 5000,
+        currentBidClient: 'Fernando',
+        productId: 'c1ff912a-b7c4-4e10-9bb2-9b7b9ae641c0',
+        auctionType: [
+          'traditional auctions',
+          'direct purchase',
+          'judicial auctions',
+        ],
+      },
+    },
+  })
   @ApiOperation({ summary: 'Update an existing auction' })
   @ApiResponse({ status: 200, description: 'Returns the updated auction.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -51,6 +85,23 @@ export class AuctionController {
   }
 
   @Patch(':id')
+  @ApiBody({
+    description: 'Partial upgrade auction',
+    schema: {
+      example: {
+        auctioneer: 'Pablo Benq',
+        initialBid: 2000,
+        currentBid: 5000,
+        currentBidClient: 'Fernando',
+        productId: 'c1ff912a-b7c4-4e10-9bb2-9b7b9ae641c0',
+        auctionType: [
+          'traditional auctions',
+          'direct purchase',
+          'judicial auctions',
+        ],
+      },
+    },
+  })
   @ApiOperation({ summary: 'Partially update an existing auction' })
   @ApiResponse({
     status: 200,

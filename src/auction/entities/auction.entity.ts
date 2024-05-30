@@ -1,5 +1,14 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
-// import { Product } from 'src/products/entities/product.entity';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
+import { User } from 'src/users/entities/users.entity';
+import { Product } from 'src/products/entities/product.entity';
 
 export enum AuctionType {
   TraditionalAuctions = 'traditional auctions',
@@ -59,4 +68,7 @@ export class Auction extends Model {
   //TODO: relations
   //   @HasMany(() => Product)
   //   products: Product[];
+
+  @BelongsToMany(() => User, () => UserAuction)
+  users: User[];
 }
