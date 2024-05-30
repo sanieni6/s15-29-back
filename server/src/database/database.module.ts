@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import * as env from '../config/enviroments';
 import { Product } from '../products/entities/product.entity';
 import { Category } from '../products/entities/category.entity';
+import { User } from 'src/users/entities/users.entity';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { Category } from '../products/entities/category.entity';
       username: env.DBUSERNAME,
       password: env.DBPASSWORD,
       database: env.DBDATABASE,
-      models: [Product, Category],
+      models: [Product, User, Category],
       autoLoadModels: true,
       synchronize: true,
       logging: false,
