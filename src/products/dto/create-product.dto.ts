@@ -1,27 +1,55 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsUUID,
+  IsNotEmpty,
+  IsEnum,
+} from 'class-validator';
+
+import { ApiProperty } from '@nestjs/swagger';
+
+export enum Category {
+  art = 'art',
+  Antiques = 'antiques',
+  Collectibles = 'collectibles',
+  Technology = 'technology',
+  Vehicles = 'vehicles',
+  RealEstate = 'real estate',
+}
+
 export class CreateProductDto {
+  @ApiProperty({ required: false, type: 'string', format: 'uuid' })
   @IsOptional()
-  @IsString()
+  @IsUUID()
   id?: string;
 
+  @ApiProperty({ required: true, type: 'string' })
+  @IsNotEmpty({ message: 'The name field is required.' })
   @IsString()
-  title: string;
+  name: string;
 
+  @ApiProperty({ required: false, type: 'string' })
+  @IsOptional()
   @IsString()
-  content: string;
+  description?: string;
 
-  @IsString()
-  date: string;
-
+  @ApiProperty({ required: true, type: 'number' })
+  @IsNotEmpty({ message: 'The initial_price field is required.' })
   @IsNumber()
-  price: number;
+  initial_price: number;
 
-  @IsNumber()
-  selled: number;
-
+  @ApiProperty({ required: true, type: 'string' })
+  @IsOptional()
   @IsString()
-  product_categories: string;
+  image: string;
 
-  @IsString()
-  status: string;
+  @ApiProperty({ required: true, enum: Category })
+  @IsNotEmpty({ message: 'The category field is required.' })
+  @IsEnum(Category, {
+    message:
+      'The category must be one of the following: ' +
+      Object.values(Category).join(', '),
+  })
+  category: Category;
 }
