@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import * as env from '../config/enviroments';
 import { Product } from '../products/entities/product.entity';
 import { Category } from '../products/entities/category.entity';
 import { User } from 'src/users/entities/users.entity';
+import { Auction } from 'src/auction/entities/auction.entity';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [
@@ -15,7 +18,7 @@ import { User } from 'src/users/entities/users.entity';
       username: process.env.DBUSERNAME,
       password: process.env.DBPASSWORD,
       database: process.env.DBDATABASE,
-      models: [Product, User, Category],
+      models: [Product, User, Category, Auction],
       autoLoadModels: true,
       synchronize: true,
       logging: false,
