@@ -1,27 +1,19 @@
 import {
-  AfterCreate,
-  AfterUpdate,
-  BeforeCreate,
-  BeforeUpdate,
   BelongsTo,
-  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
-  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
-
-export enum StateProduct {
-  Active = 'publish',
-  Inactive = 'draft',
-}
+import { Category } from './category.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Table({
   tableName: 'Products',
 })
 export class Product extends Model {
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -34,38 +26,32 @@ export class Product extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  title: string;
+  name: string;
 
   @Column({
     type: DataType.STRING,
   })
-  content: string;
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  date: string;
+  description: string;
 
   @Column({
     type: DataType.DOUBLE,
+    allowNull: false,
   })
-  price: number;
-
-  @Column({
-    type: DataType.INTEGER,
-  })
-  selled: number;
+  initial_price: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  product_categories: string;
+  image: string;
 
+  @ForeignKey(() => Category)
   @Column({
-    type: DataType.STRING,
-    allowNull: true,
+    type: DataType.UUID,
+    allowNull: false,
   })
-  status: StateProduct;
+  categoryId: string;
+
+  @BelongsTo(() => Category)
+  categoryEntity: Category;
 }

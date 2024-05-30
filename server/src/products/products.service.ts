@@ -9,10 +9,27 @@ import { Sequelize } from 'sequelize-typescript';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { Category } from '../products/entities/category.entity';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly sequelize: Sequelize) {}
+  constructor(
+    private readonly sequelize: Sequelize,
+    @InjectModel(Product)
+    private productModel: typeof Product,
+    @InjectModel(Category)
+    private categoryModel: typeof Category,
+  ) {}
+
+  private async findProductOrFail(id: string) {
+    const product = await this.productModel.findByPk(id);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    return product;
+  }
 
   async findAll() {
     try {
@@ -21,7 +38,7 @@ export class ProductsService {
     } catch (error) {
       console.error(error);
       throw new HttpException(
-        'Error al obtener todos los productos',
+        'Error getting all products',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -31,7 +48,7 @@ export class ProductsService {
     try {
       const product = await Product.findByPk(id);
       if (!product) {
-        throw new HttpException('Producto no encontrado', HttpStatus.NOT_FOUND);
+        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
       }
       return product;
     } catch (error) {
@@ -40,7 +57,7 @@ export class ProductsService {
       }
       console.error(error);
       throw new HttpException(
-        'Error al obtener el producto',
+        'Error getting the product',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -48,15 +65,33 @@ export class ProductsService {
 
   async create(createProductDto: CreateProductDto) {
     try {
-      const newProduct = await Product.create({
+      let category = await this.categoryModel.findOne({
+        where: { type: createProductDto.category },
+      });
+
+      if (!category) {
+        // Si la categoría no existe, la creamos
+        category = await this.categoryModel.create({
+          type: createProductDto.category,
+        });
+        // Aseguramos que la categoría se ha guardado correctamente antes de continuar
+        await category.save();
+      }
+
+      const newProduct = await this.productModel.create({
         id: uuidv4(),
         ...createProductDto,
+        categoryId: category.id,
       });
-      return { success: true, data: newProduct };
+
+      return {
+        success: true,
+        data: { ...newProduct.toJSON(), category: category.type },
+      };
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
       throw new HttpException(
-        'Error al crear el producto',
+        `Error creating product: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -64,58 +99,55 @@ export class ProductsService {
 
   async update(id: string, updateProductDto: UpdateProductDto) {
     try {
-      const product = await this.findOne(id);
-      if (!product) {
-        throw new NotFoundException('Producto no encontrado');
+      const product = await this.findProductOrFail(id);
+      const errors = await validate(updateProductDto);
+      if (errors.length > 0) {
+        const errorMessages = errors
+          .filter((error) => error.constraints)
+          .map((error) => Object.values(error.constraints!))
+          .join(', ');
+        throw new Error(`Validation failed: ${errorMessages}`);
       }
 
       await product.update(updateProductDto);
       return product;
     } catch (error) {
       console.error(error);
-      throw new Error('Error al actualizar el producto');
+      throw new Error('Error updating product');
     }
   }
 
   async partialUpdate(id: string, updateProductDto: Partial<UpdateProductDto>) {
     try {
-      const product = await this.findOne(id);
-      if (!product) {
-        throw new NotFoundException('Producto no encontrado');
-      }
-
+      const product = await this.findProductOrFail(id);
       await product.update(updateProductDto);
       return { success: true, data: product };
     } catch (error) {
       console.error(error);
-      throw new Error('Error al actualizar parcialmente el producto');
+      throw new Error('Error while partially updating the product');
     }
   }
 
   async remove(id: string) {
     try {
-      const product = await this.findOne(id);
-      if (!product) {
-        throw new NotFoundException('Producto no encontrado');
-      }
-
+      const product = await this.findProductOrFail(id);
       await product.destroy();
       return { success: true, data: product };
     } catch (error) {
       console.error(error);
-      throw new Error('Error al eliminar el producto');
+      throw new Error('Error deleting product');
     }
   }
   async findByName(name: string) {
     try {
       const product = await Product.findOne({ where: { name } });
       if (!product) {
-        throw new NotFoundException('Producto no encontrado');
+        throw new NotFoundException('Product not found');
       }
       return product;
     } catch (error) {
       console.error(error);
-      throw new Error('Error al obtener el producto por nombre');
+      throw new Error('Error getting the product by name');
     }
   }
 
@@ -125,7 +157,7 @@ export class ProductsService {
       return products;
     } catch (error) {
       console.error(error);
-      throw new Error('Error al obtener los productos por categoría');
+      throw new Error('Error when obtaining products by category');
     }
   }
 
@@ -136,7 +168,7 @@ export class ProductsService {
     } catch (error) {
       console.error(error);
       throw new HttpException(
-        'Error al contar los productos',
+        'Error counting the products',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
