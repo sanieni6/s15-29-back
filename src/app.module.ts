@@ -16,7 +16,7 @@ import { AuctionModule } from './auction/auction.module';
     UsersModule,
     AuthModule,
     CloudinaryModule,
-  , AuctionModule],
+   AuctionModule],
   controllers: [AppController],
   providers: [AppService],
 })
