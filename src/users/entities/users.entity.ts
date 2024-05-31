@@ -17,7 +17,6 @@ export class User extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
     primaryKey: true,
-    unique: true,
   })
   id: string;
 
