@@ -8,6 +8,7 @@ import {
   Delete,
   Put,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -21,6 +22,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { QueryProductsDto } from './dto/query-products.dto';
 
 @ApiBearerAuth()
 @ApiTags('products')
@@ -41,10 +43,16 @@ export class ProductsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all products' })
-  @ApiResponse({ status: 200, description: 'List of products.' })
-  findAll() {
-    return this.productsService.findAll();
+  @ApiOperation({
+    summary: 'Get all products (you must send "page" and "limit" per query).',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'If there is no error, the response will be an object with information about the page and the requested products, in addition to bringing a count of their attributes',
+  })
+  findAll(@Query() querys: QueryProductsDto) {
+    return this.productsService.findAll(querys);
   }
 
   @Get(':id')
