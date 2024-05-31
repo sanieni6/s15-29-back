@@ -12,6 +12,9 @@ import { Product } from './entities/product.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { Category } from './entities/category.entity';
 import { validate } from 'class-validator';
+import { QueryProductsDto } from './dto/query-products.dto';
+import { PaginatedProductsResponse } from './interface/serviceInterface';
+import { Op, Order } from 'sequelize';
 
 @Injectable()
 export class ProductsService {
@@ -31,10 +34,84 @@ export class ProductsService {
     return product;
   }
 
-  async findAll() {
+  async findAll(filters: QueryProductsDto): Promise<PaginatedProductsResponse> {
     try {
-      const products = await Product.findAll();
-      return { success: true, data: products };
+      const query = <any>{};
+      const include = [];
+
+      if (filters.category) {
+        include.push({
+          model: Category,
+          as: 'categoryEntity', // Alias para la tabla "Category"
+          where: Sequelize.where(
+            Sequelize.cast(Sequelize.col('categoryEntity.type'), 'text'),
+            {
+              [Op.like]: `%${filters.category}%`,
+            },
+          ),
+        });
+      }
+
+      if (filters.minPrice && filters.maxPrice) {
+        query['initial_price'] = {
+          [Op.gte]: parseFloat(filters.minPrice),
+          [Op.lte]: parseFloat(filters.maxPrice),
+        };
+      } else if (filters.minPrice) {
+        query['initial_price'] = { [Op.gte]: parseFloat(filters.minPrice) };
+      } else if (filters.maxPrice) {
+        query['initial_price'] = { [Op.lte]: parseFloat(filters.maxPrice) };
+      }
+
+      // Buscador
+      if (filters.search) {
+        const keywords = filters.search.trim().split(' ');
+
+        // Construir un array de condiciones de búsqueda para cada palabra
+        const whereConditions = keywords.map((keyword) => ({
+          name: {
+            [Op.iLike]: `%${keyword}%`,
+          },
+        }));
+
+        query[Op.and] = whereConditions;
+      }
+
+      // Realizar ordenamiento
+      const order: Order =
+        filters.order === 'ASC'
+          ? [['initial_price', 'ASC']]
+          : [['initial_price', 'DESC']];
+
+      // Realizar la consulta para obtener todos los productos
+      const products = await Product.findAll({
+        where: query,
+        include: include.length > 0 ? include : undefined,
+        order,
+      });
+
+      // Calcular el número total de páginas
+      const total = products.length;
+
+      // Aplicar paginación
+      const limit = parseInt(filters.limit);
+      const page = parseInt(filters.page);
+      const offset = (page - 1) * limit;
+      const paginatedProducts = products.slice(offset, offset + limit);
+
+      // Calcular el número total de páginas
+      const limitOfPages = Math.ceil(total / limit);
+
+      const totalPages = Math.ceil(total / Number(limit));
+
+      return {
+        page: page,
+        prevPage: page === 1 ? null : page - 1,
+        nextPage: page === limitOfPages ? null : page + 1,
+        totalPages,
+        total: limitOfPages,
+        products: paginatedProducts,
+      };
     } catch (error) {
       console.error(error);
       throw new HttpException(

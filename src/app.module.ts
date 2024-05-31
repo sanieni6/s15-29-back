@@ -5,11 +5,18 @@ import { ProductsModule } from './products/products.module';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { AuctionModule } from './auction/auction.module';
 
 
 @Module({
-  imports: [ ProductsModule, DatabaseModule, UsersModule, AuthModule, AuctionModule],
+  imports: [
+    ProductsModule,
+    DatabaseModule,
+    UsersModule,
+    AuthModule,
+    CloudinaryModule,
+   AuctionModule],
   controllers: [AppController],
   providers: [AppService],
 })

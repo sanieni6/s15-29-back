@@ -22,29 +22,34 @@ export class Product extends Model {
   })
   id: string;
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   name: string;
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
   })
   description: string;
 
+  @ApiProperty()
   @Column({
     type: DataType.DOUBLE,
     allowNull: false,
   })
   initial_price: number;
 
+  @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   image: string;
 
+  @ApiProperty()
   @ForeignKey(() => Category)
   @Column({
     type: DataType.UUID,
