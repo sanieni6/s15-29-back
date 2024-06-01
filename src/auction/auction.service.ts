@@ -39,6 +39,8 @@ export class AuctionService {
       await this.userAuctionModel.create(
         {
           id: uuidv4(),
+          valueBid: newAuction.initialBid,
+          hourBid: new Date(),
           userId: createAuctionDto.userId,
           auctionId: newAuction.id, // Utiliza el id de la subasta creada
         },

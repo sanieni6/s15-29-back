@@ -19,6 +19,18 @@ export class UserAuction extends Model {
   })
   id: string;
 
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  valueBid: number;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  hourBid: Date;
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.UUID,

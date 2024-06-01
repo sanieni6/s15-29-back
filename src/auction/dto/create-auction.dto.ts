@@ -6,7 +6,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { AuctionType } from '../../products/entities/auction.entity';
+// import { AuctionType } from '../../products/entities/auction.entity';
 
 export class CreateAuctionDto {
   @IsOptional()

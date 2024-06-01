@@ -30,29 +30,22 @@ export class Auction extends Model {
   id: string;
 
   @Column({
-    type: DataType.CHAR,
-    allowNull: false,
-    unique: true,
-  })
-  auctioneer: string;
-
-  @Column({
     type: DataType.FLOAT,
     allowNull: false,
   })
   initialBid: number;
 
   @Column({
-    type: DataType.FLOAT,
+    type: DataType.DATE,
     allowNull: false,
   })
-  currentBid: number;
+  startDate: Date;
 
   @Column({
-    type: DataType.CHAR,
+    type: DataType.DATE,
     allowNull: false,
   })
-  currentBidClient: string;
+  endDate: Date;
 
   @Column({
     type: DataType.CHAR,

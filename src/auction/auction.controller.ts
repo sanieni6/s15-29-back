@@ -24,16 +24,16 @@ export class AuctionController {
     description: 'Create a new auction',
     schema: {
       example: {
-        auctioneer: 'Pablo Benq',
-        initialBid: 2000,
-        currentBid: 5000,
-        currentBidClient: 'Fernando',
-        productId: 'c1ff912a-b7c4-4e10-9bb2-9b7b9ae641c0',
+        initialBid: 1000.5,
+        startDate: '2024-06-01T00:00:00Z',
+        endDate: '2024-06-10T00:00:00Z',
+        productId: '004dd695-7b9f-4315-a65e-4595f60da51a',
         auctionType: [
           'traditional auctions',
           'direct purchase',
           'judicial auctions',
         ],
+        userId: '15475d76-bf2e-43db-b537-5094ea408651',
       },
     },
   })
@@ -64,16 +64,16 @@ export class AuctionController {
     description: 'Update auction',
     schema: {
       example: {
-        auctioneer: 'Pablo Benq',
-        initialBid: 2000,
-        currentBid: 5000,
-        currentBidClient: 'Fernando',
-        productId: 'c1ff912a-b7c4-4e10-9bb2-9b7b9ae641c0',
+        initialBid: 1000.5,
+        startDate: '2024-06-01T00:00:00Z',
+        endDate: '2024-06-10T00:00:00Z',
+        productId: '004dd695-7b9f-4315-a65e-4595f60da51a',
         auctionType: [
           'traditional auctions',
           'direct purchase',
           'judicial auctions',
         ],
+        userId: '15475d76-bf2e-43db-b537-5094ea408651',
       },
     },
   })
@@ -89,16 +89,16 @@ export class AuctionController {
     description: 'Partial upgrade auction',
     schema: {
       example: {
-        auctioneer: 'Pablo Benq',
-        initialBid: 2000,
-        currentBid: 5000,
-        currentBidClient: 'Fernando',
-        productId: 'c1ff912a-b7c4-4e10-9bb2-9b7b9ae641c0',
+        initialBid: 1000.5,
+        startDate: '2024-06-01T00:00:00Z',
+        endDate: '2024-06-10T00:00:00Z',
+        productId: '004dd695-7b9f-4315-a65e-4595f60da51a',
         auctionType: [
           'traditional auctions',
           'direct purchase',
           'judicial auctions',
         ],
+        userId: '15475d76-bf2e-43db-b537-5094ea408651',
       },
     },
   })
