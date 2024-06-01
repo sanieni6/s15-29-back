@@ -2,6 +2,7 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -64,6 +65,9 @@ export class User extends Model {
   address: string;
 
   // Relations
-  @BelongsToMany(() => Auction, () => UserAuction)
+  @HasMany(() => Auction)
   auctions: Auction[];
+
+  @BelongsToMany(() => Auction, () => UserAuction)
+  auctionsAsUser: Auction[];
 }

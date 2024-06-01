@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   BelongsToMany,
   Column,
   DataType,
+  ForeignKey,
   HasMany,
   Model,
   Table,
@@ -17,7 +19,7 @@ export enum AuctionType {
 }
 
 @Table({
-  tableName: 'Auction',
+  tableName: 'Auctions',
 })
 export class Auction extends Model {
   @Column({
@@ -60,14 +62,24 @@ export class Auction extends Model {
 
   @Column({
     type: DataType.ENUM,
-    values: ['traditional auctions', 'direct purchase', 'judicial auctions'],
+    values: Object.values(AuctionType),
     allowNull: false,
   })
   auctionType: string;
 
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  userId: string;
+
   //TODO: relations
   //   @HasMany(() => Product)
   //   products: Product[];
+
+  @BelongsTo(() => User)
+  user: User;
 
   @BelongsToMany(() => User, () => UserAuction)
   users: User[];
