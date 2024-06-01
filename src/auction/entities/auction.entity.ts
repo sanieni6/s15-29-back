@@ -1,5 +1,16 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
-// import { Product } from 'src/products/entities/product.entity';
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
+import { User } from 'src/users/entities/users.entity';
+import { Product } from 'src/products/entities/product.entity';
 
 export enum AuctionType {
   TraditionalAuctions = 'traditional auctions',
@@ -8,7 +19,7 @@ export enum AuctionType {
 }
 
 @Table({
-  tableName: 'Auction',
+  tableName: 'Auctions',
 })
 export class Auction extends Model {
   @Column({
@@ -19,29 +30,22 @@ export class Auction extends Model {
   id: string;
 
   @Column({
-    type: DataType.CHAR,
-    allowNull: false,
-    unique: true,
-  })
-  auctioneer: string;
-
-  @Column({
     type: DataType.FLOAT,
     allowNull: false,
   })
   initialBid: number;
 
   @Column({
-    type: DataType.FLOAT,
+    type: DataType.DATE,
     allowNull: false,
   })
-  currentBid: number;
+  startDate: Date;
 
   @Column({
-    type: DataType.CHAR,
+    type: DataType.DATE,
     allowNull: false,
   })
-  currentBidClient: string;
+  endDate: Date;
 
   @Column({
     type: DataType.CHAR,
@@ -51,12 +55,25 @@ export class Auction extends Model {
 
   @Column({
     type: DataType.ENUM,
-    values: ['traditional auctions', 'direct purchase', 'judicial auctions'],
+    values: Object.values(AuctionType),
     allowNull: false,
   })
   auctionType: string;
 
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  userId: string;
+
   //TODO: relations
   //   @HasMany(() => Product)
   //   products: Product[];
+
+  @BelongsTo(() => User)
+  user: User;
+
+  @BelongsToMany(() => User, () => UserAuction)
+  users: User[];
 }

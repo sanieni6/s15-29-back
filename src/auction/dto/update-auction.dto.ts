@@ -1,9 +1,14 @@
-import { IsEnum, IsNumber, IsString, IsUUID } from 'class-validator';
-import { PartialType } from '@nestjs/swagger';
-import { CreateAuctionDto } from './create-auction.dto';
-import { AuctionType } from '../../products/entities/auction.entity';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+// import { AuctionType } from '../../products/entities/auction.entity';
 
-export class UpdateAuctionDto extends PartialType(CreateAuctionDto) {
+export class UpdateAuctionDto {
+  @IsOptional()
   @IsUUID()
   id?: string;
 
@@ -19,9 +24,12 @@ export class UpdateAuctionDto extends PartialType(CreateAuctionDto) {
   @IsString()
   currentBidClient?: string;
 
-  @IsString()
+  @IsUUID()
   productId?: string;
 
-  @IsEnum(AuctionType)
+  @IsEnum(['traditional auctions', 'direct purchase', 'judicial auctions'])
   auctionType?: string;
+
+  @IsUUID()
+  userId?: string;
 }

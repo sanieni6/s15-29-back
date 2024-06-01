@@ -1,32 +1,43 @@
 import {
   IsEnum,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
-import { AuctionType } from '../../products/entities/auction.entity';
+// import { AuctionType } from '../../products/entities/auction.entity';
 
 export class CreateAuctionDto {
   @IsOptional()
   @IsUUID()
   id?: string;
 
+  @IsNotEmpty()
   @IsString()
   auctioneer: string;
 
+  @IsNotEmpty()
   @IsNumber()
   initialBid: number;
 
+  @IsNotEmpty()
   @IsNumber()
   currentBid: number;
 
+  @IsNotEmpty()
   @IsString()
   currentBidClient: string;
 
-  @IsString()
+  @IsNotEmpty()
+  @IsUUID()
   productId: string;
 
-  @IsEnum(AuctionType)
+  @IsNotEmpty()
+  @IsEnum(['traditional auctions', 'direct purchase', 'judicial auctions'])
   auctionType: string;
+
+  @IsNotEmpty()
+  @IsUUID()
+  userId: string;
 }
