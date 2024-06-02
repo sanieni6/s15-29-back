@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 
@@ -9,13 +9,9 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 export class AuthController {
     constructor(private authService: AuthService) {}
 
-//   @HttpCode(HttpStatus.OK)
-//   @Post('login')
-//   signIn(@Body() signInDto: Record<string, any>) {
-//     return this.authService.signIn(signInDto.username, signInDto.password);
-//   }
-
   @Post('register')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({ status: 201, description: 'The user has been successfully registered.'})
   @ApiBody({
     description: 'Register a new user',
     schema: {
@@ -25,12 +21,14 @@ export class AuthController {
         name: 'luissss',
       },
     },
+    type: RegisterAuthDto,
   })
     signUp(@Body() signUpDto: RegisterAuthDto) {
         return this.authService.signUp(signUpDto);
     }
 
     @Post('login')
+    @ApiOperation({ summary: 'Login' })
     @ApiBody({
         description: 'Login',
         schema: {
