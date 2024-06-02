@@ -7,40 +7,64 @@ import { LoginAuthDto } from './dto/login-auth.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
-  @ApiResponse({ status: 201, description: 'The user has been successfully registered.'})
+  @ApiResponse({
+    status: 201,
+    description: 'The user has been successfully registered.',
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Bad Request.' 
+})
+  @ApiResponse({ 
+    status: 409, 
+    description: 'Conflict: User already exists.' 
+})
   @ApiBody({
     description: 'Register a new user',
-    schema: {
+    examples: {
       example: {
+        value:{
         email: 'example@gmail.com',
-        password: '12345432',
-        name: 'luissss',
+        password: '12345678',
+        name: 'John Doe',
+        }
       },
     },
     type: RegisterAuthDto,
   })
-    signUp(@Body() signUpDto: RegisterAuthDto) {
-        return this.authService.signUp(signUpDto);
-    }
+  signUp(@Body() signUpDto: RegisterAuthDto) {
+    return this.authService.signUp(signUpDto);
+  }
 
-    @Post('login')
-    @ApiOperation({ summary: 'Login' })
-    @ApiBody({
-        description: 'Login',
-        schema: {
-          example: {
-            email: 'example@gmail.com',
-            password: '12345432'
+  @Post('login')
+  @ApiOperation({ summary: 'Login' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Login successful.', 
+})
+@ApiResponse({ 
+    status: 401, 
+    description: 'Unauthorized: Invalid credentials.' 
+})
+  @ApiBody({
+    description: 'Login',
+    examples: {
+      example1: {
+          summary: 'Example login',
+          description: 'An example of user login',
+          value: {
+              email: 'example@gmail.com',
+              password: '12345678',
           },
-        },
-      })
-    signIn(@Body() userObjectLogin: LoginAuthDto) {
-        return this.authService.signIn(userObjectLogin);
-    }
-
-
+      },
+  },
+    type: LoginAuthDto,
+  })
+  signIn(@Body() userObjectLogin: LoginAuthDto) {
+    return this.authService.signIn(userObjectLogin);
+  }
 }
