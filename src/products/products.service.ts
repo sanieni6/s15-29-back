@@ -251,4 +251,17 @@ export class ProductsService {
       );
     }
   }
+
+  async findByUser(userId: string): Promise<Product[]> {
+    try {
+      const products = await this.productModel.findAll({ where: { userId } });
+      return products;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(
+        'Error getting products for user',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
