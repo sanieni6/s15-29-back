@@ -3,11 +3,13 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { Category } from './category.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Auction } from 'src/auction/entities/auction.entity';
 
 @Table({
   tableName: 'Products',
@@ -15,10 +17,9 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Product extends Model {
   @ApiProperty()
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
     primaryKey: true,
-    unique: true,
   })
   id: string;
 
@@ -57,6 +58,12 @@ export class Product extends Model {
   })
   categoryId: string;
 
+  // Relations
+  // 1 -> 1: A product has one auction
+  @HasOne(() => Auction)
+  auction: Auction;
+
+  // N -> 1: Many products belong to one category
   @BelongsTo(() => Category)
   categoryEntity: Category;
 }
