@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Product } from 'src/products/entities/product.entity';
 
 @Table({
   tableName: 'Users',
@@ -53,4 +54,7 @@ export class User extends Model {
     allowNull: true,
   })
   address: string;
+
+  @HasMany(() => Product)
+  products: Product[];
 }

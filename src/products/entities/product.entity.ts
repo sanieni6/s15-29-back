@@ -8,6 +8,7 @@ import {
 } from 'sequelize-typescript';
 import { Category } from './category.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/users/entities/users.entity';
 
 @Table({
   tableName: 'Products',
@@ -59,4 +60,14 @@ export class Product extends Model {
 
   @BelongsTo(() => Category)
   categoryEntity: Category;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  userId: number;
+
+  @BelongsTo(() => User)
+  user: User;
 }
