@@ -1,15 +1,24 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsToMany,
+  Column,
+  DataType,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Product } from 'src/products/entities/product.entity';
+import { Auction } from 'src/auction/entities/auction.entity';
+import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
 
 @Table({
   tableName: 'Users',
 })
 export class User extends Model {
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
     allowNull: false,
     primaryKey: true,
-    unique: true,
   })
   id: string;
 
@@ -28,6 +37,7 @@ export class User extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    unique: true,
   })
   email: string;
 
@@ -57,4 +67,11 @@ export class User extends Model {
 
   @HasMany(() => Product)
   products: Product[];
+
+  // Relations
+  @HasMany(() => Auction)
+  auctions: Auction[];
+
+  @BelongsToMany(() => Auction, () => UserAuction)
+  auctionsAsUser: Auction[];
 }

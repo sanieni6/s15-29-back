@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   HttpException,
   Injectable,
   UnauthorizedException,
@@ -16,21 +17,13 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  //   async signIn(username: string, pass: string): Promise<{ access_token: string }> {
-  //     const user = await this.usersService.findByName(username);
-  //     if (user?.password !== pass) {
-  //       throw new UnauthorizedException();
-  //     }
-  //     const payload = { sub: user.id, username: user.name };
-  //     // TODO: Generate a JWT and return it here
-  //     // instead of the user object
-  //     return {
-  //         access_token: await this.jwtService.signAsync(payload),
-  //       };
-  //   }
-
   async signUp(userObject: RegisterAuthDto) {
-    const { password } = userObject;
+    const { email, password } = userObject;
+    // Check if the email is already registered
+    const existingUser = await this.usersService.findByEmail(email);
+    if (existingUser) {
+      throw new ConflictException('Email already registered');
+    }
     const plainToHash = await hash(password as string, 10);
     userObject = { ...userObject, password: plainToHash };
     const createUserDto = {

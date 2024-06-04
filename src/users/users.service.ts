@@ -112,12 +112,9 @@ export class UsersService {
     async findByEmail(email: string) {
         try {
             const user = await User.findOne({ where: { email } });
-            if (!user) {
-                throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
-            }
             return user;
         } catch (error) {
-            throw new Error('Error al buscar el usuario');
+            throw new HttpException('Error al buscar el usuario', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

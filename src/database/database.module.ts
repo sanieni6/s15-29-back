@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Product } from '../products/entities/product.entity';
-import { Category } from '../products/entities/category.entity';
-import { User } from 'src/users/entities/users.entity';
+// Modulos
 import { Auction } from 'src/auction/entities/auction.entity';
+import { Category } from '../products/entities/category.entity';
+import { Product } from '../products/entities/product.entity';
+import { User } from 'src/users/entities/users.entity';
+import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -18,12 +20,13 @@ dotenv.config();
       username: process.env.DBUSERNAME,
       password: process.env.DBPASSWORD,
       database: process.env.DBDATABASE,
-      models: [Product, User, Category, Auction],
+      models: [Product, User, Category, Auction, UserAuction],
       autoLoadModels: true,
       synchronize: true,
       logging: false,
       sync: { force: true },
     }),
+    SequelizeModule.forFeature([Product, User, Category, Auction, UserAuction]),
   ],
   exports: [SequelizeModule],
 })
