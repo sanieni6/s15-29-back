@@ -86,7 +86,13 @@ export class ProductsService {
       // Realizar la consulta para obtener todos los productos
       const products = await Product.findAll({
         where: query,
-        include: include.length > 0 ? include : undefined,
+        include: [
+          ...include,
+          {
+            model: Category, // Asegúrate de importar Category en la parte superior del archivo
+            as: 'categoryEntity',
+          },
+        ],
         order,
       });
 
