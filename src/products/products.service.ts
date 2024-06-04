@@ -140,7 +140,7 @@ export class ProductsService {
     }
   }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, userId: string) {
     try {
       let category = await this.categoryModel.findOne({
         where: { type: createProductDto.category },
@@ -159,6 +159,7 @@ export class ProductsService {
         id: uuidv4(),
         ...createProductDto,
         categoryId: category.id,
+        userId: userId,
       });
 
       return {

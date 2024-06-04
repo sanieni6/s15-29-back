@@ -9,6 +9,8 @@ import {
   Put,
   UseGuards,
   Query,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -23,10 +25,10 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { QueryProductsDto } from './dto/query-products.dto';
+import { Request } from 'express';
 
 @ApiBearerAuth()
 @ApiTags('products')
-@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -38,8 +40,12 @@ export class ProductsController {
     status: 201,
     description: 'The product has been successfully created.',
   })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @UseGuards(JwtAuthGuard)
+  create(@Body() createProductDto: CreateProductDto, @Req() request: Request & { user: { userId: string } }) {
+    if (!request.user) {
+      throw new UnauthorizedException();
+    }
+    return this.productsService.create(createProductDto, request.user.userId);
   }
 
   @Get()
