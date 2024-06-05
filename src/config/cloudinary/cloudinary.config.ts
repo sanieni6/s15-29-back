@@ -1,9 +1,16 @@
 // cloudinary.config.ts
-import { registerAs } from '@nestjs/config';
+import { v2 as cloudinary } from 'cloudinary';
 import { CLOUD_KEY, CLOUD_NAME, CLOUD_SECRET } from '../enviroments';
 
-export default registerAs('cloudinary', () => ({
-  cloudName: CLOUD_NAME,
-  apiKey: CLOUD_KEY,
-  apiSecret: CLOUD_SECRET,
-}));
+
+export const CloudinaryProvider = {
+  
+  provide: 'CLOUDINARY',
+  useFactory: () => {
+    return cloudinary.config({
+      cloud_name: CLOUD_NAME,
+      api_key: CLOUD_KEY,
+      api_secret: CLOUD_SECRET,
+    });
+  },
+};
