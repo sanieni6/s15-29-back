@@ -15,11 +15,13 @@ import { validate } from 'class-validator';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { PaginatedProductsResponse } from './interface/serviceInterface';
 import { Op, Order } from 'sequelize';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly sequelize: Sequelize,
+    private readonly cloudinaryService: CloudinaryService,
     @InjectModel(Product)
     private productModel: typeof Product,
     @InjectModel(Category)
@@ -160,12 +162,21 @@ export class ProductsService {
         // Aseguramos que la categoría se ha guardado correctamente antes de continuar
         await category.save();
       }
+      
+      // let imageUrl = '';
+      // if (createProductDto.image) {
+      //   const uploadResponse = await this.cloudinaryService.uploadFile(
+      //     createProductDto.image,
+      //   );
+      //   imageUrl = uploadResponse.url.stringify();
+      // }
 
       const newProduct = await this.productModel.create({
         id: uuidv4(),
         ...createProductDto,
         categoryId: category.id,
         userId: userId,
+        // image: imageUrl,
       });
 
       return {

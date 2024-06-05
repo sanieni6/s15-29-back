@@ -41,8 +41,7 @@ export class CreateProductDto {
 
   @ApiProperty({ required: true, type: 'string' })
   @IsOptional()
-  @IsString()
-  image: string;
+  image: Express.Multer.File;
 
   @ApiProperty({ required: true, enum: Category })
   @IsNotEmpty({ message: 'The category field is required.' })

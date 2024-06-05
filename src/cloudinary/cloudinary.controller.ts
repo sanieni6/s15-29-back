@@ -19,7 +19,7 @@ export class CloudinaryController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
   uploadImage(
     @UploadedFile(
       new ParseFilePipe({
