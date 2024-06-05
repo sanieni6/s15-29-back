@@ -24,7 +24,7 @@ dotenv.config();
       autoLoadModels: true,
       synchronize: true,
       logging: false,
-      sync: { force: true },
+      sync: { force: false },
     }),
     SequelizeModule.forFeature([Product, User, Category, Auction, UserAuction]),
   ],

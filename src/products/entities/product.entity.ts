@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { Category } from './category.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/users/entities/users.entity';
 import { Auction } from 'src/auction/entities/auction.entity';
 
 @Table({
@@ -66,4 +67,14 @@ export class Product extends Model {
   // N -> 1: Many products belong to one category
   @BelongsTo(() => Category)
   categoryEntity: Category;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  userId: string;
+
+  @BelongsTo(() => User)
+  user: User;
 }

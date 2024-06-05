@@ -15,11 +15,13 @@ import { validate } from 'class-validator';
 import { QueryProductsDto } from './dto/query-products.dto';
 import { PaginatedProductsResponse } from './interface/serviceInterface';
 import { Op, Order } from 'sequelize';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     private readonly sequelize: Sequelize,
+    private readonly cloudinaryService: CloudinaryService,
     @InjectModel(Product)
     private productModel: typeof Product,
     @InjectModel(Category)
@@ -86,7 +88,13 @@ export class ProductsService {
       // Realizar la consulta para obtener todos los productos
       const products = await Product.findAll({
         where: query,
-        include: include.length > 0 ? include : undefined,
+        include: [
+          ...include,
+          {
+            model: Category, // Asegúrate de importar Category en la parte superior del archivo
+            as: 'categoryEntity',
+          },
+        ],
         order,
       });
 
@@ -140,7 +148,7 @@ export class ProductsService {
     }
   }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, userId: string) {
     try {
       let category = await this.categoryModel.findOne({
         where: { type: createProductDto.category },
@@ -154,11 +162,21 @@ export class ProductsService {
         // Aseguramos que la categoría se ha guardado correctamente antes de continuar
         await category.save();
       }
+      
+      // let imageUrl = '';
+      // if (createProductDto.image) {
+      //   const uploadResponse = await this.cloudinaryService.uploadFile(
+      //     createProductDto.image,
+      //   );
+      //   imageUrl = uploadResponse.url.stringify();
+      // }
 
       const newProduct = await this.productModel.create({
         id: uuidv4(),
         ...createProductDto,
         categoryId: category.id,
+        userId: userId,
+        // image: imageUrl,
       });
 
       return {
@@ -246,6 +264,19 @@ export class ProductsService {
       console.error(error);
       throw new HttpException(
         'Error counting the products',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async findByUser(userId: string): Promise<Product[]> {
+    try {
+      const products = await this.productModel.findAll({ where: { userId } });
+      return products;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(
+        'Error getting products for user',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

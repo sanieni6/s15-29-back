@@ -1,38 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as cloudinary from 'cloudinary';
-import { CLOUD_KEY, CLOUD_NAME, CLOUD_SECRET } from '../config/enviroments';
+import { v2 as cloudinary } from 'cloudinary';
+import { UploadApiResponse, DeleteApiResponse } from 'cloudinary';
+
+import { CloudinaryResponse } from './cloudinary-response';
+const streamifier = require('streamifier');
 
 @Injectable()
 export class CloudinaryService {
-  constructor(private configService: ConfigService) {
-    cloudinary.v2.config({
-      cloud_name: CLOUD_NAME,
-      api_key: CLOUD_KEY,
-      api_secret: CLOUD_SECRET,
+  
+  uploadFile(file: Express.Multer.File): Promise<CloudinaryResponse> {
+    return new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('No result from Cloudinary'));
+          resolve(result);
+        },
+      );
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
   }
 
-  async uploadImage(file: Express.Multer.File): Promise<any> {
-    return new Promise((resolve, reject) => {
-      cloudinary.v2.uploader
-        .upload_stream((error, result) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        })
-        .end(file.buffer);
-    });
+  async getAllFiles(): Promise<UploadApiResponse[]> {
+    const { resources } = await cloudinary.api.resources();
+    return resources;
   }
 
-  async deleteImage(publicId: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      cloudinary.v2.uploader.destroy(publicId, (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      });
-    });
+  async getFile(publicId: string): Promise<UploadApiResponse> {
+    const file = await cloudinary.api.resource(publicId);
+    return file;
+  }
+
+  async deleteImage(publicId: string): Promise<DeleteApiResponse> {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
   }
 }

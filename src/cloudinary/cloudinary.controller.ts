@@ -1,7 +1,12 @@
 import {
   Controller,
   Delete,
+  FileTypeValidator,
+  Get,
+  MaxFileSizeValidator,
+  NotFoundException,
   Param,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -9,28 +14,43 @@ import {
 import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('files')
+@Controller('upload')
 export class CloudinaryController {
-  constructor(private cloudinaryService: CloudinaryService) {}
+  constructor(private readonly cloudinaryService: CloudinaryService) {}
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const result = await this.cloudinaryService.uploadImage(file);
-    return {
-      id: result.public_id,
-      url: result.url,
-      secure_url: result.secure_url,
-    };
+  @Post()
+  @UseInterceptors(FileInterceptor('image'))
+  uploadImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+          new FileTypeValidator({ fileType: '.(jpg|png|jpeg)' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.cloudinaryService.uploadFile(file);
+  }
+
+  @Get()
+  async getAllFiles() {
+    return this.cloudinaryService.getAllFiles();
+  }
+
+  @Get(':id')
+  async getFile(@Param('id') id: string) {
+    const file = await this.cloudinaryService.getFile(id);
+    if (!file) {
+      throw new NotFoundException('File not found');
+    }
+    return file;
   }
 
   @Delete(':id')
   async deleteFile(@Param('id') id: string) {
-    const { result } = await this.cloudinaryService.deleteImage(id);
-    if (result === 'ok') {
-      return 'It was deleted correctly';
-    } else {
-      return 'There is no file with this id';
-    }
+    const response = await this.cloudinaryService.deleteImage(id);
+    return response;
   }
 }

@@ -6,6 +6,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Product } from 'src/products/entities/product.entity';
 import { Auction } from 'src/auction/entities/auction.entity';
 import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
 
@@ -63,6 +64,9 @@ export class User extends Model {
     allowNull: true,
   })
   address: string;
+
+  @HasMany(() => Product)
+  products: Product[];
 
   // Relations
   @HasMany(() => Auction)

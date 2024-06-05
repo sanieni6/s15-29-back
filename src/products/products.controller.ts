@@ -8,7 +8,11 @@ import {
   Delete,
   Put,
   UseGuards,
+  UseInterceptors,
   Query,
+  Req,
+  UnauthorizedException,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -23,13 +27,18 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { QueryProductsDto } from './dto/query-products.dto';
+import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @ApiBearerAuth()
 @ApiTags('products')
-@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post()
   @ApiBody({ type: CreateProductDto })
@@ -38,8 +47,21 @@ export class ProductsController {
     status: 201,
     description: 'The product has been successfully created.',
   })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @Body() createProductDto: CreateProductDto,
+    @Req() request: Request & { user: { userId: string } },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!request.user) {
+      throw new UnauthorizedException();
+    }
+    if (file) {
+      const uploadResponse = await this.cloudinaryService.uploadFile(file);
+      createProductDto.image = uploadResponse.url; // Guardar la URL de la imagen en el DTO
+    }
+    return this.productsService.create(createProductDto, request.user.userId);
   }
 
   @Get()
