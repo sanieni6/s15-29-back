@@ -14,6 +14,6 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
   ],
   providers: [ProductsService, CloudinaryService],
   controllers: [ProductsController, CloudinaryController],
-  exports: [ProductsService, CloudinaryService],
+  exports: [ProductsService, CloudinaryService, SequelizeModule],
 })
 export class ProductsModule {}

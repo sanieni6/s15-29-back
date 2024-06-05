@@ -18,9 +18,9 @@ export enum AuctionType {
 }
 
 @Table({
-  tableName: 'Auctions',
+  tableName: 'Transactions',
 })
-export class Auction extends Model {
+export class Transaction extends Model {
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
@@ -61,24 +61,13 @@ export class Auction extends Model {
   })
   productId: string;
 
-  @ForeignKey(() => User)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  userId: string;
-
   // Relations
 
-  // 1 -> 1: One auction has one product
+  // 1 -> 1: One Transaction has one product
   @BelongsTo(() => Product)
   product: Product;
 
-  // N -> 1: Many auctions are created by one user
-  @BelongsTo(() => User)
-  user: User;
-
-  // N -> N: Many auctions can have many users (bidders)
+  // N -> N: Many Transactions can have many users (bidders)
   @BelongsToMany(() => User, () => UserAuction)
   users: User[];
 }
