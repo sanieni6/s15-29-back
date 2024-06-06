@@ -72,4 +72,13 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   isActive: boolean;
+
+  @ApiPropertyOptional(
+    {
+      description: 'The image of the user',
+    }
+  )
+  @IsOptional()
+  image?: Express.Multer.File;
+
 }
