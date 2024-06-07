@@ -13,8 +13,10 @@ import { Transaction } from './entities/transaction.entity';
 import { UserAuction } from '../user-auction/entities/user-auction.entity';
 import { Product } from 'src/products/entities/product.entity';
 
-// una ves terminada la fecha limite enviar correo electronico con la ruta de la pasarela de pagos. inyectar servicio puja mas alta de user-auction para envio de email
+// una ves terminada la fecha limite enviar correo electronico con la ruta de la pasarela de pagos, tambien crea la orden con estado false hasta terminado el pago. inyectar servicio puja mas alta de user-auction para envio de email
 // Node mailer
+
+// cuando es compra directa crear orden de pago
 
 @Injectable()
 export class TransactionService {
