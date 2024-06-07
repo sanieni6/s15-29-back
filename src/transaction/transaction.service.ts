@@ -18,6 +18,9 @@ import { Product } from 'src/products/entities/product.entity';
 
 // cuando es compra directa crear orden de pago
 
+
+// Agregar a la tabla campo active --> evalua hora final con hora actual, en caso de ser true active seria false caso contrario true
+
 @Injectable()
 export class TransactionService {
   constructor(
