@@ -13,6 +13,9 @@ import { Transaction } from './entities/transaction.entity';
 import { UserAuction } from '../user-auction/entities/user-auction.entity';
 import { Product } from 'src/products/entities/product.entity';
 
+// una ves terminada la fecha limite enviar correo electronico con la ruta de la pasarela de pagos. inyectar servicio puja mas alta de user-auction para envio de email
+// Node mailer
+
 @Injectable()
 export class TransactionService {
   constructor(
@@ -46,6 +49,10 @@ export class TransactionService {
         },
         { transaction }, //Indicar que esta operación se realiza dentro de la transacción
       );
+
+
+      // revisar este punto, no es el user del producto sino el user que esta pujando
+
 
       // Crear registro de la tabla intermedia con UUID
       await this.userAuctionModel.create(
