@@ -13,13 +13,20 @@ import { Transaction } from './entities/transaction.entity';
 import { UserAuction } from '../user-auction/entities/user-auction.entity';
 import { Product } from 'src/products/entities/product.entity';
 
-// una ves terminada la fecha limite enviar correo electronico con la ruta de la pasarela de pagos, tambien crea la orden con estado false hasta terminado el pago. inyectar servicio puja mas alta de user-auction para envio de email
-// Node mailer
+//Luis
+//evalua hora final con hora actual --> funcion
+// servicio buscar puja mas alta
+// nuevo servicio
+// una ves terminada la fecha limite enviar la ruta de la pasarela de pagos, usar servicio que busque puja mas alta de user-transaccion, tambien crea la orden con estado false hasta terminado el pago.
 
-// cuando es compra directa crear orden de pago
 
+//Leo hacer crud orders y el seed de products
 
-// Agregar a la tabla campo active --> evalua hora final con hora actual, en caso de ser true active seria false caso contrario true
+//Clay
+// Agregar a la tabla campo active
+// Hago el crud transaccion
+// fijarme en el usuario del create
+// crud de usuario/transaccion
 
 @Injectable()
 export class TransactionService {
@@ -31,16 +38,13 @@ export class TransactionService {
     @InjectModel(Product) private productModel: typeof Product,
   ) {}
 
-  // Se utiliza transaction para asegurar que tanto la creación de la subasta
-  // como la creación del registro de la tabla intermedia(UserAuction) se realicen de manera atómica.
+  // cuando es compra directa crear orden de pago
   async create(createTransactionDto: CreateTransactionDto) {
-    // Inicia la transacción
     const transaction = await this.sequelize.transaction();
     try {
-      // Obtener el producto para extraer el userId
       const product = await this.productModel.findOne({
         where: { id: createTransactionDto.productId },
-        transaction, // Indica que esta operación se realizar dentro de la transacción
+        transaction,
       });
 
       if (!product) {
@@ -52,32 +56,26 @@ export class TransactionService {
           id: uuidv4(),
           ...createTransactionDto,
         },
-        { transaction }, //Indicar que esta operación se realiza dentro de la transacción
+        { transaction },
       );
-
 
       // revisar este punto, no es el user del producto sino el user que esta pujando
 
-
-      // Crear registro de la tabla intermedia con UUID
       await this.userAuctionModel.create(
         {
           id: uuidv4(),
           valueBid: newTransaction.initialBid,
           hourBid: new Date(),
           userId: product.userId,
-          transactionId: newTransaction.id, // Utiliza el id de la subasta creada
+          transactionId: newTransaction.id,
         },
         { transaction },
       );
 
-      // Confirmar la transacción para aplicar los cambios
       await transaction.commit();
 
-      // Si todo ha ido bien, se retorna la nueva trasacción creada
       return { success: true, data: newTransaction };
     } catch (error) {
-      // En caso de error, deshace cualquier cambio realizado dentro de la transacción
       await transaction.rollback();
       console.log(error);
       throw new HttpException(
