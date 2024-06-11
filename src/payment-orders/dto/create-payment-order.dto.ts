@@ -10,10 +10,6 @@ import {
 
 export class CreatePaymentOrderDto {
   @IsOptional()
-  @IsUUID()
-  id: string;
-
-  @IsOptional()
   @IsBoolean()
   isPaid: boolean;
 
