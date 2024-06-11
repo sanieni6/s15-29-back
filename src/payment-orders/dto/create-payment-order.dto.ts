@@ -1,8 +1,10 @@
 import {
   IsBoolean,
+  IsDate,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
 } from 'class-validator';
 
@@ -15,6 +17,10 @@ export class CreatePaymentOrderDto {
   @IsBoolean()
   isPaid: boolean;
 
+  @IsOptional()
+  @IsDate()
+  paidAt?: Date;
+
   @IsNotEmpty()
   @IsNumber()
   tax: number;
@@ -26,4 +32,8 @@ export class CreatePaymentOrderDto {
   @IsNotEmpty()
   @IsNumber()
   total: number;
+
+  @IsOptional()
+  @IsString()
+  paymentId?: string;
 }
