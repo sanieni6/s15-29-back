@@ -32,6 +32,8 @@ export class PaymentOrdersService {
         // { transaction },
       );
 
+      // consulta en la transaccion id que viene createPaymentOrderDto.transactionId y se le hace un delete
+
       // Simulación de integración con API de pago
       // const paymentResponse = await this.processPayment(newPay mentOrder);
       // if (!paymentResponse.success) {
