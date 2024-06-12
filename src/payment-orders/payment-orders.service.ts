@@ -26,7 +26,7 @@ export class PaymentOrdersService {
         {
           id: uuidv4(),
           ...createPaymentOrderDto,
-          //TODO: CAMBIAR POR USER CON PUJA MÁS ALTA O USER QUE OPTO POR COMPRA DIRECTA
+          paidAt: new Date(),
           userId,
         },
         // { transaction },

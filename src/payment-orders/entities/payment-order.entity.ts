@@ -65,9 +65,19 @@ export class PaymentOrder extends Model {
   })
   userId: string;
 
+  @ForeignKey(() => Transaction)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  transactionId: string;
+
   //Relations
 
   // 1 -> N: One PaymentOrder belongs to a User
   @BelongsTo(() => User)
   user: User;
+
+  @BelongsTo(() => Transaction)
+  transaction: Transaction;
 }

@@ -29,6 +29,10 @@ export class CreatePaymentOrderDto {
   @IsNumber()
   total: number;
 
+  @IsNotEmpty()
+  @IsUUID()
+  transactionId: string;
+
   @IsOptional()
   @IsString()
   paymentId?: string;

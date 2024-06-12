@@ -4,6 +4,8 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -99,6 +101,9 @@ export class Transaction extends Model {
   // 1 -> 1: One Transaction has one product
   @BelongsTo(() => Product)
   product: Product;
+
+  @HasOne(() => PaymentOrder)
+  paymentOrder: PaymentOrder;
 
   // 1 -> N: One Transaction belongs to a PaymentOrder
 
