@@ -12,6 +12,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from './entities/transaction.entity';
 import { UserAuction } from '../user-auction/entities/user-auction.entity';
 import { Product } from 'src/products/entities/product.entity';
+import { User } from 'src/users/entities/users.entity';
 
 //Luis
 //evalua hora final con hora actual --> funcion
@@ -19,11 +20,10 @@ import { Product } from 'src/products/entities/product.entity';
 // nuevo servicio
 // una ves terminada la fecha limite enviar la ruta de la pasarela de pagos, usar servicio que busque puja mas alta de user-transaccion, tambien crea la orden con estado false hasta terminado el pago.
 
-
 //Leo hacer crud orders y el seed de products
 
 //Clay
-// Agregar a la tabla campo active
+// Agregar a la tabla campo active --> done
 // Hago el crud transaccion
 // fijarme en el usuario del create
 // crud de usuario/transaccion
@@ -39,49 +39,34 @@ export class TransactionService {
   ) {}
 
   // cuando es compra directa crear orden de pago
-  async create(createTransactionDto: CreateTransactionDto) {
-    const transaction = await this.sequelize.transaction();
+  async create(createTransactionDto: CreateTransactionDto, id: string) {
+
+    
     try {
+      const transaction = new Transaction();
+      transaction.id = uuidv4();
+      transaction.initialBid = createTransactionDto.initialBid;
+      transaction.startDate = createTransactionDto.startDate;
+      transaction.endDate = createTransactionDto.endDate;
+      transaction.transactionType = createTransactionDto.transactionType;
+      transaction.productId = createTransactionDto.productId;
+      transaction.id = id;
+
       const product = await this.productModel.findOne({
-        where: { id: createTransactionDto.productId },
-        transaction,
+        where: {
+          id: createTransactionDto.productId,
+        },
       });
 
       if (!product) {
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException('Product not found');
       }
 
-      const newTransaction = await Transaction.create(
-        {
-          id: uuidv4(),
-          ...createTransactionDto,
-        },
-        { transaction },
-      );
-
-      // revisar este punto, no es el user del producto sino el user que esta pujando
-
-      await this.userAuctionModel.create(
-        {
-          id: uuidv4(),
-          valueBid: newTransaction.initialBid,
-          hourBid: new Date(),
-          userId: product.userId,
-          transactionId: newTransaction.id,
-        },
-        { transaction },
-      );
-
-      await transaction.commit();
-
-      return { success: true, data: newTransaction };
+      await transaction.save();
+      return transaction;
     } catch (error) {
-      await transaction.rollback();
-      console.log(error);
-      throw new HttpException(
-        'Error creating transaction',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      console.error(error);
+      throw new Error('Error creating transaction');
     }
   }
 

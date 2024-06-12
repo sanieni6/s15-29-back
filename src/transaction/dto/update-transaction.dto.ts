@@ -23,7 +23,7 @@ export class UpdateTransactionDto {
   endDate?: string;
 
   @IsEnum(['traditional auctions', 'direct purchase', 'judicial auctions'])
-  auctionType?: string;
+  transactionType?: string;
 
   @IsUUID()
   productId?: string;

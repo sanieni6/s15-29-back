@@ -9,10 +9,10 @@ import {
 } from 'class-validator';
 // import { AuctionType } from '../../products/entities/auction.entity';
 
-export class CreateTransactionDto {
+export class  CreateTransactionDto {
   @IsOptional()
   @IsUUID()
-  id?: string;
+  id: string;
 
   @IsNotEmpty()
   @IsNumber()
@@ -20,15 +20,15 @@ export class CreateTransactionDto {
 
   @IsNotEmpty()
   @IsDate()
-  startDate: string;
+  startDate: Date;
 
   @IsNotEmpty()
   @IsDate()
-  endDate: string;
+  endDate: Date;
 
   @IsNotEmpty()
-  @IsEnum(['traditional auctions', 'direct purchase', 'judicial auctions'])
-  auctionType: string;
+  @IsEnum(['Auction, Buy'])
+  transactionType: string;
 
   @IsNotEmpty()
   @IsUUID()
