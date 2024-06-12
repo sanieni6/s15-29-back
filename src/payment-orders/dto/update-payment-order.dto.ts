@@ -2,9 +2,11 @@ import { PartialType } from '@nestjs/swagger';
 import { CreatePaymentOrderDto } from './create-payment-order.dto';
 import {
   IsBoolean,
+  IsDate,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
 } from 'class-validator';
 
@@ -17,6 +19,10 @@ export class UpdatePaymentOrderDto extends PartialType(CreatePaymentOrderDto) {
   @IsBoolean()
   isPaid?: boolean;
 
+  @IsOptional()
+  @IsDate()
+  paidAt?: Date;
+
   @IsNotEmpty()
   @IsNumber()
   tax?: number;
@@ -28,4 +34,8 @@ export class UpdatePaymentOrderDto extends PartialType(CreatePaymentOrderDto) {
   @IsNotEmpty()
   @IsNumber()
   total?: number;
+
+  @IsOptional()
+  @IsString()
+  paymentId?: string;
 }
