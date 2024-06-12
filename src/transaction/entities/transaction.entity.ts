@@ -7,6 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { PaymentOrder } from 'src/payment-orders/entities/payment-order.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
 import { User } from 'src/users/entities/users.entity';
@@ -74,13 +75,22 @@ export class Transaction extends Model {
   })
   productId: string;
 
-
+  @ForeignKey(() => PaymentOrder)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  orderId: string;
 
   // Relations
 
   // 1 -> 1: One Transaction has one product
   @BelongsTo(() => Product)
   product: Product;
+
+  // 1 -> N: One Transaction belongs to a PaymentOrder
+  @BelongsTo(() => PaymentOrder)
+  paymentOrder: PaymentOrder;
 
   // N -> N: Many Transactions can have many users (bidders)
   @BelongsToMany(() => User, () => UserAuction)
