@@ -5,10 +5,11 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Transaction } from './entities/transaction.entity';
 import { UserAuction } from '../user-auction/entities/user-auction.entity';
 import { ProductsModule } from 'src/products/products.module';
+import { TransactionSchedulerService } from './transactionScheduler.service';
 
 @Module({
   controllers: [TransactionController],
-  providers: [TransactionService],
+  providers: [TransactionService, TransactionSchedulerService],
   imports: [
     SequelizeModule.forFeature([Transaction, UserAuction]),
     ProductsModule,

@@ -9,6 +9,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { AuctionModule } from './transaction/transaction.module';
 import { UserAuctionModule } from './user-auction/user-auction.module';
 import { PaymentOrdersModule } from './payment-orders/payment-orders.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PaymentOrdersModule } from './payment-orders/payment-orders.module';
     UserAuctionModule,
     CloudinaryModule,
     PaymentOrdersModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

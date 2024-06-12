@@ -53,6 +53,19 @@ export class Transaction extends Model {
   })
   auctionType: string;
 
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  active: boolean;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  winnerId?: string;
+
   @ForeignKey(() => Product)
   @Column({
     type: DataType.UUID,
@@ -60,6 +73,8 @@ export class Transaction extends Model {
     unique: true,
   })
   productId: string;
+
+
 
   // Relations
 
