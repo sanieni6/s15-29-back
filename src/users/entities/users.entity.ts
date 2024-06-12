@@ -6,6 +6,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { PaymentOrder } from 'src/payment-orders/entities/payment-order.entity';
 import { Product } from 'src/products/entities/product.entity';
 import { Transaction } from 'src/transaction/entities/transaction.entity';
 
@@ -66,8 +67,12 @@ export class User extends Model {
   })
   address: string;
 
+  // Relations
   @HasMany(() => Product)
   products: Product[];
+
+  @HasMany(() => PaymentOrder)
+  paymentOrder: PaymentOrder[];
 
   @BelongsToMany(() => Transaction, () => UserAuction)
   auctionsAsUser: Transaction[];
