@@ -69,6 +69,15 @@ export class TransactionController {
     return this.transactionService.findOne(id);
   }
 
+  @Get('user')
+  @ApiOperation({ summary: 'Get all transactions by user' })
+  @ApiResponse({ status: 200, description: 'Return all transactions by user.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UseGuards(JwtAuthGuard)
+  findAllByUser(@GetUser() { userId }: IGetUser) {
+    return this.transactionService.findByUserId(userId);
+  }
+
   @Put(':id')
   @ApiBody({
     description: 'Update transaction',

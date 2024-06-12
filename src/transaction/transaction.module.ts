@@ -20,5 +20,6 @@ import { PaymentOrdersService } from 'src/payment-orders/payment-orders.service'
     PaymentOrdersModule,
     UserAuctionModule,
   ],
+  exports: [TransactionService],
 })
 export class TransactionModule {}

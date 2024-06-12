@@ -69,8 +69,6 @@ export class TransactionService {
 
       await transaction.save();
 
-
-
       return transaction;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -171,6 +169,24 @@ export class TransactionService {
       console.log(error);
       throw new HttpException(
         `Error deleting transaction by id #${id}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async findByUserId(userId: string) {
+    try {
+      const transactions = await this.transactionModel.findAll({
+        where: {
+          userId: userId,
+        },
+      });
+
+      return { success: true, data: transactions };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        `Error getting transactions by user id #${userId}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
