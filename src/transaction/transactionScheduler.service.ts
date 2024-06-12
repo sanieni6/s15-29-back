@@ -3,7 +3,6 @@ import { Cron } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { Transaction } from './entities/transaction.entity';
-import { TransactionService } from './transaction.service';
 import { UserAuctionService } from 'src/user-auction/user-auction.service';
 
 @Injectable()
@@ -12,7 +11,6 @@ export class TransactionSchedulerService {
 
   constructor(
     @InjectModel(Transaction) private transactionModel: typeof Transaction,
-    private readonly transactionService: TransactionService,
     private readonly userAuctionService: UserAuctionService,
   ) {}
 
