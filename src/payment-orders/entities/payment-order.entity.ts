@@ -66,8 +66,6 @@ export class PaymentOrder extends Model {
   userId: string;
 
   //Relations
-  @HasMany(() => Transaction)
-  transaction: Transaction[];
 
   // 1 -> N: One PaymentOrder belongs to a User
   @BelongsTo(() => User)

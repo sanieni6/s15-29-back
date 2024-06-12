@@ -6,7 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { AuctionModule } from './transaction/transaction.module';
+import { TransactionModule } from './transaction/transaction.module';
 import { UserAuctionModule } from './user-auction/user-auction.module';
 import { PaymentOrdersModule } from './payment-orders/payment-orders.module';
 
@@ -16,7 +16,7 @@ import { PaymentOrdersModule } from './payment-orders/payment-orders.module';
     DatabaseModule,
     UsersModule,
     AuthModule,
-    AuctionModule,
+    TransactionModule,
     UserAuctionModule,
     CloudinaryModule,
     PaymentOrdersModule,

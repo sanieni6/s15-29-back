@@ -13,7 +13,7 @@ import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
 import { User } from 'src/users/entities/users.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
-export enum AuctionType {
+export enum TransactionType {
   Auction = 'Auction',
   Buy = 'Buy',
 }
@@ -61,12 +61,12 @@ export class Transaction extends Model {
 
   @ApiProperty({
     example: 'Buy',
-    enum: AuctionType,
+    enum: TransactionType,
     description: 'The type of transaction',
   })
   @Column({
     type: DataType.ENUM,
-    values: Object.values(AuctionType),
+    values: Object.values(TransactionType),
     allowNull: false,
   })
   transactionType: string;
@@ -94,13 +94,6 @@ export class Transaction extends Model {
   })
   active: boolean;
 
-  @ForeignKey(() => PaymentOrder)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  orderId: string;
-
   // Relations
 
   // 1 -> 1: One Transaction has one product
@@ -108,8 +101,6 @@ export class Transaction extends Model {
   product: Product;
 
   // 1 -> N: One Transaction belongs to a PaymentOrder
-  @BelongsTo(() => PaymentOrder)
-  paymentOrder: PaymentOrder;
 
   // N -> N: Many Transactions can have many users (bidders)
   @BelongsToMany(() => User, () => UserAuction)

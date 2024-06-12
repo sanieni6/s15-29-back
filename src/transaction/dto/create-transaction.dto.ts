@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 // import { AuctionType } from '../../products/entities/auction.entity';
 
-export class  CreateTransactionDto {
+export class CreateTransactionDto {
   @IsOptional()
   @IsUUID()
   id: string;
@@ -18,7 +18,7 @@ export class  CreateTransactionDto {
   @IsNumber()
   initialBid: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsDate()
   startDate: Date;
 
