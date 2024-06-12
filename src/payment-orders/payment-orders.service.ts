@@ -10,68 +10,44 @@ import { CreatePaymentOrderDto } from './dto/create-payment-order.dto';
 import { UpdatePaymentOrderDto } from './dto/update-payment-order.dto';
 import { PaymentOrder } from './entities/payment-order.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { Transaction } from 'src/transaction/entities/transaction.entity';
 
 @Injectable()
 export class PaymentOrdersService {
   constructor(
     private readonly sequelize: Sequelize,
+    @InjectModel(Transaction) private transactionModel: typeof Transaction,
     @InjectModel(PaymentOrder) private paymentOrderModel: typeof PaymentOrder,
   ) {}
 
   async create(createPaymentOrderDto: CreatePaymentOrderDto, userId: string) {
-    //TODO: USAR TRANSACTION PARA IMPLEMENTAR API PAGO
-    // const transaction = await this.sequelize.transaction();
     try {
-      const newPaymentOrder = await this.paymentOrderModel.create(
-        {
-          id: uuidv4(),
-          ...createPaymentOrderDto,
-          paidAt: new Date(),
-          userId,
+      const newPaymentOrder = await this.paymentOrderModel.create({
+        id: uuidv4(),
+        ...createPaymentOrderDto,
+        paidAt: new Date(),
+        userId,
+      });
+
+      const transaction = await this.transactionModel.findOne({
+        where: {
+          id: createPaymentOrderDto.transactionId,
         },
-        // { transaction },
-      );
+      });
 
-      // consulta en la transaccion id que viene createPaymentOrderDto.transactionId y se le hace un delete
+      if (transaction) {
+        transaction.active = false;
+        await transaction.save();
+      }
 
-      // Simulación de integración con API de pago
-      // const paymentResponse = await this.processPayment(newPay mentOrder);
-      // if (!paymentResponse.success) {
-      //   throw new HttpException(
-      //     'Payment processing failed',
-      //     HttpStatus.BAD_REQUEST,
-      //   );
-      // }
-
-      // SI SE EFECTUA CORRECTAMENTE EL PAGO COMPLETAR CAMPOS OPCIONALES
-      // newPaymentOrder.isPaid = true;
-      // newPaymentOrder.paidAt = new Date();
-      // newPaymentOrder.paymentId = paymentResponse.paymentId;
-
-      // await newPaymentOrder.save({ transaction });
-
-      // Confirmar la transacción para aplicar los cambios
-      // await transaction.commit();
       return newPaymentOrder;
     } catch (error) {
-      // En caso de error, deshace cualquier cambio realizado dentro de la orden de pago
-      // await transaction.rollback();
       console.error(error.message);
       throw new HttpException(
         `Error creating payment order: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-  }
-
-  // TODO API PAGO:
-  private async processPayment(paymentOrder: PaymentOrder) {
-    // Lógica para interactuar con la API de pago
-    // Retorna una respuesta simulada de la API de pago
-    return {
-      success: true,
-      paymentId: 'some-unique-payment-id',
-    };
   }
 
   async findAll() {
