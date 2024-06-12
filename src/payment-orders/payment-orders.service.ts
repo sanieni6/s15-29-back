@@ -33,7 +33,7 @@ export class PaymentOrdersService {
       );
 
       // Simulación de integración con API de pago
-      // const paymentResponse = await this.processPayment(newPaymentOrder);
+      // const paymentResponse = await this.processPayment(newPay mentOrder);
       // if (!paymentResponse.success) {
       //   throw new HttpException(
       //     'Payment processing failed',
@@ -50,7 +50,7 @@ export class PaymentOrdersService {
 
       // Confirmar la transacción para aplicar los cambios
       // await transaction.commit();
-      return { success: true, data: newPaymentOrder };
+      return newPaymentOrder;
     } catch (error) {
       // En caso de error, deshace cualquier cambio realizado dentro de la orden de pago
       // await transaction.rollback();

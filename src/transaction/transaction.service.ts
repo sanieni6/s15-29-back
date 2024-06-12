@@ -17,6 +17,7 @@ import { PaymentOrdersService } from 'src/payment-orders/payment-orders.service'
 import { UserAuctionService } from 'src/user-auction/user-auction.service';
 import { CreateUserAuctionDto } from 'src/user-auction/dto/create-user-auction.dto';
 import { CreatePaymentOrderDto } from 'src/payment-orders/dto/create-payment-order.dto';
+import { PaymentOrder } from 'src/payment-orders/entities/payment-order.entity';
 
 //Luis
 //evalua hora final con hora actual --> funcion
@@ -39,6 +40,7 @@ export class TransactionService {
     @InjectModel(Transaction) private transactionModel: typeof Transaction,
     @InjectModel(UserAuction) private userAuctionModel: typeof UserAuction,
     @InjectModel(Product) private productModel: typeof Product,
+    @InjectModel(PaymentOrder) private paymentOrderModel: typeof PaymentOrder,
     private readonly paymentOrdersService: PaymentOrdersService, // Añade esta línea
     private readonly userAuctionService: UserAuctionService, // Y esta línea
   ) {}
@@ -53,7 +55,7 @@ export class TransactionService {
         endDate: createTransactionDto.endDate,
         transactionType: createTransactionDto.transactionType,
         productId: createTransactionDto.productId,
-      }); 
+      });
 
       const product = await this.productModel.findOne({
         where: {
@@ -67,24 +69,7 @@ export class TransactionService {
 
       await transaction.save();
 
-      // // Verificar el tipo de transacción y actuar en consecuencia
-      // if (createTransactionDto.transactionType === 'Buy') {
-      //   // Crear una orden de pago para una compra directa
-      //   const createPaymentOrderDto = new CreatePaymentOrderDto({
-      //     transactionId: transaction.id,
-      //     userId: userId,
-      //     // Otros campos necesarios
-      //   });
-      //   await this.paymentOrdersService.create(createPaymentOrderDto);
-      // } else if (createTransactionDto.transactionType === 'Auction') {
-      //   // Crear una subasta para el usuario
-      //   const createUserAuctionDto = new CreateUserAuctionDto({
-      //     transactionId: transaction.id,
-      //     userId: userId,
-      //     // Otros campos necesarios
-      //   });
-      //   await this.userAuctionService.create(createUserAuctionDto);
-      // }
+
 
       return transaction;
     } catch (error) {
