@@ -7,11 +7,17 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Request } from 'express';
+import { GetUser } from 'src/auth/decorator/auth-user-decorator';
+import { IGetUser } from 'src/auth/interfaces/getUser.interface';
 
 @Controller('transactions')
 @ApiTags('transactions')
@@ -39,8 +45,12 @@ export class TransactionController {
   })
   @ApiResponse({ status: 200, description: 'Return a new transaction.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionService.create(createTransactionDto);
+  @UseGuards(JwtAuthGuard)
+  create(
+    @GetUser() { userId }: IGetUser,
+    @Body() createTransactionDto: CreateTransactionDto,
+  ) {
+    return this.transactionService.create(createTransactionDto, userId);
   }
 
   @Get()
@@ -57,6 +67,15 @@ export class TransactionController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findOne(@Param('id') id: string) {
     return this.transactionService.findOne(id);
+  }
+
+  @Get('user')
+  @ApiOperation({ summary: 'Get all transactions by user' })
+  @ApiResponse({ status: 200, description: 'Return all transactions by user.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UseGuards(JwtAuthGuard)
+  findAllByUser(@GetUser() { userId }: IGetUser) {
+    return this.transactionService.findByUserId(userId);
   }
 
   @Put(':id')

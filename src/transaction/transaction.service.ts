@@ -12,6 +12,12 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Transaction } from './entities/transaction.entity';
 import { UserAuction } from '../user-auction/entities/user-auction.entity';
 import { Product } from 'src/products/entities/product.entity';
+import { User } from 'src/users/entities/users.entity';
+import { PaymentOrdersService } from 'src/payment-orders/payment-orders.service';
+import { UserAuctionService } from 'src/user-auction/user-auction.service';
+import { CreateUserAuctionDto } from 'src/user-auction/dto/create-user-auction.dto';
+import { CreatePaymentOrderDto } from 'src/payment-orders/dto/create-payment-order.dto';
+import { PaymentOrder } from 'src/payment-orders/entities/payment-order.entity';
 
 //Luis
 //evalua hora final con hora actual --> funcion -----done
@@ -19,11 +25,10 @@ import { Product } from 'src/products/entities/product.entity';
 // nuevo servicio
 // una ves terminada la fecha limite enviar la ruta de la pasarela de pagos, usar servicio que busque puja mas alta de user-transaccion, tambien crea la orden con estado false hasta terminado el pago.
 
-
 //Leo hacer crud orders y el seed de products
 
 //Clay
-// Agregar a la tabla campo active
+// Agregar a la tabla campo active --> done
 // Hago el crud transaccion
 // fijarme en el usuario del create
 // crud de usuario/transaccion
@@ -32,56 +37,51 @@ import { Product } from 'src/products/entities/product.entity';
 export class TransactionService {
   constructor(
     private readonly sequelize: Sequelize,
-    // Inyección de Modelos
     @InjectModel(Transaction) private transactionModel: typeof Transaction,
     @InjectModel(UserAuction) private userAuctionModel: typeof UserAuction,
     @InjectModel(Product) private productModel: typeof Product,
+    @InjectModel(PaymentOrder) private paymentOrderModel: typeof PaymentOrder,
+    private readonly paymentOrdersService: PaymentOrdersService, // Añade esta línea
+    private readonly userAuctionService: UserAuctionService, // Y esta línea
   ) {}
 
   // cuando es compra directa crear orden de pago
-  async create(createTransactionDto: CreateTransactionDto) {
-    const transaction = await this.sequelize.transaction();
+  async create(createTransactionDto: CreateTransactionDto, userId: string) {
     try {
+      const transaction = await this.transactionModel.create({
+        id: uuidv4(),
+        initialBid: createTransactionDto.initialBid,
+        startDate: new Date(),
+        endDate: createTransactionDto.endDate,
+        transactionType: createTransactionDto.transactionType,
+        productId: createTransactionDto.productId,
+      });
+
       const product = await this.productModel.findOne({
-        where: { id: createTransactionDto.productId },
-        transaction,
+        where: {
+          id: createTransactionDto.productId,
+        },
       });
 
       if (!product) {
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException('Product not found');
       }
 
-      const newTransaction = await Transaction.create(
-        {
-          id: uuidv4(),
-          ...createTransactionDto,
-        },
-        { transaction },
-      );
+      await transaction.save();
 
-      // revisar este punto, no es el user del producto sino el user que esta pujando
-
-      await this.userAuctionModel.create(
-        {
-          id: uuidv4(),
-          valueBid: newTransaction.initialBid,
-          hourBid: new Date(),
-          userId: product.userId,
-          transactionId: newTransaction.id,
-        },
-        { transaction },
-      );
-
-      await transaction.commit();
-
-      return { success: true, data: newTransaction };
+      return transaction;
     } catch (error) {
-      await transaction.rollback();
-      console.log(error);
-      throw new HttpException(
-        'Error creating transaction',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error.name === 'SequelizeValidationError') {
+        throw new HttpException('Validation error', HttpStatus.BAD_REQUEST);
+      } else {
+        console.error(error);
+        throw new HttpException(
+          'Error creating transaction',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     }
   }
 
@@ -193,6 +193,24 @@ export class TransactionService {
       console.log(error);
       throw new HttpException(
         `Error getting the end time`,
+         HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+        
+  async findByUserId(userId: string) {
+    try {
+      const transactions = await this.transactionModel.findAll({
+        where: {
+          userId: userId,
+        },
+      });
+
+      return { success: true, data: transactions };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        `Error getting transactions by user id #${userId}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

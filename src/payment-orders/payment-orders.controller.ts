@@ -7,10 +7,14 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { PaymentOrdersService } from './payment-orders.service';
 import { CreatePaymentOrderDto } from './dto/create-payment-order.dto';
 import { UpdatePaymentOrderDto } from './dto/update-payment-order.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { GetUser } from 'src/auth/decorator/auth-user-decorator';
+import { IGetUser } from 'src/auth/interfaces/getUser.interface';
 
 @Controller('payment-orders')
 export class PaymentOrdersController {
@@ -18,7 +22,11 @@ export class PaymentOrdersController {
 
   // TODO: CAMBIAR LÓGICA USERID
   @Post()
-  create(@Body() createPaymentOrderDto: CreatePaymentOrderDto, userId: string) {
+  @UseGuards(JwtAuthGuard)
+  create(
+    @GetUser() { userId }: IGetUser,
+    @Body() createPaymentOrderDto: CreatePaymentOrderDto,
+  ) {
     return this.paymentOrdersService.create(createPaymentOrderDto, userId);
   }
 

@@ -10,5 +10,6 @@ import { PaymentOrder } from './entities/payment-order.entity';
   imports: [SequelizeModule.forFeature([PaymentOrder, Transaction, User])],
   controllers: [PaymentOrdersController],
   providers: [PaymentOrdersService],
+  exports: [PaymentOrdersService, PaymentOrdersModule],
 })
 export class PaymentOrdersModule {}
