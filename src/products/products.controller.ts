@@ -13,6 +13,7 @@ import {
   Req,
   UnauthorizedException,
   UploadedFile,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -82,7 +83,7 @@ export class ProductsController {
   @ApiOperation({ summary: 'Get a product by ID' })
   @ApiResponse({ status: 200, description: 'The product.' })
   @ApiResponse({ status: 404, description: 'Product not found.' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.findOne(id);
   }
 
@@ -95,7 +96,10 @@ export class ProductsController {
     description: 'The product has been successfully updated.',
   })
   @ApiResponse({ status: 404, description: 'Product not found.' })
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
     return this.productsService.update(id, updateProductDto);
   }
 
@@ -109,7 +113,7 @@ export class ProductsController {
   })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   partialUpdate(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductDto: UpdateProductDto,
   ) {
     return this.productsService.partialUpdate(id, updateProductDto);
@@ -123,7 +127,7 @@ export class ProductsController {
     description: 'The product has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Product not found.' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.remove(id);
   }
 }

@@ -20,7 +20,6 @@ import { IGetUser } from 'src/auth/interfaces/getUser.interface';
 export class PaymentOrdersController {
   constructor(private readonly paymentOrdersService: PaymentOrdersService) {}
 
-  // TODO: CAMBIAR LÓGICA USERID
   @Post()
   @UseGuards(JwtAuthGuard)
   create(

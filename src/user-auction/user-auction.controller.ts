@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Req,
   UnauthorizedException,
@@ -13,7 +14,6 @@ import { CreateUserAuctionDto } from './dto/create-user-auction.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
-import { get } from 'http';
 
 @Controller('user-auction')
 @ApiTags('user-auctions')
@@ -56,7 +56,7 @@ export class UserAuctionController {
     status: 200,
     description: 'Return auction.',
   })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.userAuctionService.findOne(id);
   }
 }

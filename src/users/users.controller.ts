@@ -5,6 +5,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Put,
@@ -60,7 +61,7 @@ export class UsersController {
           role: 'user',
           address: '123 Main St',
           isActive: true,
-          image: 'a file'
+          image: 'a file',
         },
       },
     },
@@ -104,7 +105,7 @@ export class UsersController {
   })
   @ApiParam({ name: 'id', required: true, description: 'The user ID' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }
 
@@ -140,7 +141,7 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('image'))
   @Put(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -177,7 +178,7 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('image'))
   @Patch(':id')
   async partialUpdate(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
@@ -200,7 +201,7 @@ export class UsersController {
   })
   @ApiParam({ name: 'id', required: true, description: 'The user ID' })
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.remove(id);
   }
 }

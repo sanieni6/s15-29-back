@@ -9,6 +9,7 @@ import {
   Put,
   UseGuards,
   Req,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -65,7 +66,7 @@ export class TransactionController {
   @ApiOperation({ summary: 'Get transaction by ID' })
   @ApiResponse({ status: 200, description: 'Return transaction.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.transactionService.findOne(id);
   }
 
@@ -100,7 +101,7 @@ export class TransactionController {
   @ApiResponse({ status: 200, description: 'Returns the updated transaction.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
     return this.transactionService.update(id, updateTransactionDto);
@@ -131,7 +132,7 @@ export class TransactionController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   partialUpdate(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
     return this.transactionService.partialUpdate(id, updateTransactionDto);
@@ -145,7 +146,7 @@ export class TransactionController {
   })
   @ApiResponse({ status: 404, description: 'Transaction not found.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.transactionService.remove(id);
   }
 }
