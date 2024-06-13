@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,13 +24,18 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @ApiBearerAuth()
 @ApiTags('users')
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({
@@ -53,12 +60,21 @@ export class UsersController {
           role: 'user',
           address: '123 Main St',
           isActive: true,
+          image: 'a file'
         },
       },
     },
   })
+  @UseInterceptors(FileInterceptor('image'))
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (file) {
+      const uploadResponse = await this.cloudinaryService.uploadFile(file);
+      createUserDto.image = uploadResponse.url;
+    }
     return this.usersService.create(createUserDto);
   }
 
@@ -121,8 +137,17 @@ export class UsersController {
     },
     type: UpdateUserDto,
   })
+  @UseInterceptors(FileInterceptor('image'))
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (file) {
+      const uploadResponse = await this.cloudinaryService.uploadFile(file);
+      updateUserDto.image = uploadResponse.url; // Guardar la URL de la imagen en el DTO
+    }
     return this.usersService.update(id, updateUserDto);
   }
 
@@ -149,8 +174,17 @@ export class UsersController {
     },
     type: UpdateUserDto,
   })
+  @UseInterceptors(FileInterceptor('image'))
   @Patch(':id')
-  partialUpdate(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async partialUpdate(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (file) {
+      const uploadResponse = await this.cloudinaryService.uploadFile(file);
+      updateUserDto.image = uploadResponse.url; // Guardar la URL de la imagen en el DTO
+    }
     return this.usersService.partialUpdate(id, updateUserDto);
   }
 

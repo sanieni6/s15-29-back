@@ -5,10 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/users.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
-    constructor(private readonly sequelize: Sequelize) {}
+    constructor(
+        private readonly sequelize: Sequelize,
+    private readonly cloudinaryService: CloudinaryService,
+    ) {}
 
     async create(createUserDto: CreateUserDto) {
         try {

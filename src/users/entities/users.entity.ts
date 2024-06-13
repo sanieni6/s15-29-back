@@ -67,7 +67,12 @@ export class User extends Model {
   })
   address: string;
 
-  // Relations
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  image: string;
+
   @HasMany(() => Product)
   products: Product[];
 
