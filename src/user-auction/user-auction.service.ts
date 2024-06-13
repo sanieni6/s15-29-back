@@ -18,7 +18,7 @@ export class UserAuctionService {
 
   async highestBid(transactionId: string) {
     const highestBidAuction = await this.userAuctionModel.findOne({
-      where: { id: transactionId },
+      where: { transactionId: transactionId },
       order: [['valueBid', 'DESC']],
     });
 

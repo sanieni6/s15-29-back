@@ -31,8 +31,6 @@ export class TransactionSchedulerService {
         },
       });
 
-      console.log('done each 5 seconds');
-
       for (const transaction of endedAuctions) {
         try {
           const highestBid = await this.userAuctionService.highestBid(
