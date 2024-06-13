@@ -87,7 +87,4 @@ export class UserAuctionService {
       );
     }
   }
-
-
-
 }

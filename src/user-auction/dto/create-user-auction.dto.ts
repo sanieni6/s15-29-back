@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateUserAuctionDto {
 
@@ -7,11 +7,11 @@ export class CreateUserAuctionDto {
     id?: string;
 
     @IsNotEmpty()
-    @IsString()
+    @IsUUID()
     userId: string;
 
     @IsNotEmpty()
-    @IsString()
+    @IsUUID()
     transactionId: string;
 
     @IsNotEmpty()
@@ -19,7 +19,7 @@ export class CreateUserAuctionDto {
     valueBid: number;
 
     @IsOptional()
-    @IsString()
+    @IsDate()
     hourBid?: string;
 
 }
