@@ -6,8 +6,10 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { PaymentOrder } from 'src/payment-orders/entities/payment-order.entity';
 import { Product } from 'src/products/entities/product.entity';
-import { Auction } from 'src/auction/entities/auction.entity';
+import { Transaction } from 'src/transaction/entities/transaction.entity';
+
 import { UserAuction } from 'src/user-auction/entities/user-auction.entity';
 
 @Table({
@@ -74,10 +76,9 @@ export class User extends Model {
   @HasMany(() => Product)
   products: Product[];
 
-  // Relations
-  @HasMany(() => Auction)
-  auctions: Auction[];
+  @HasMany(() => PaymentOrder)
+  paymentOrder: PaymentOrder[];
 
-  @BelongsToMany(() => Auction, () => UserAuction)
-  auctionsAsUser: Auction[];
+  @BelongsToMany(() => Transaction, () => UserAuction)
+  auctionsAsUser: Transaction[];
 }

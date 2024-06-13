@@ -1,19 +1,21 @@
 import {
   IsBoolean,
+  IsDate,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
 } from 'class-validator';
 
 export class CreatePaymentOrderDto {
   @IsOptional()
-  @IsUUID()
-  id: string;
-
-  @IsOptional()
   @IsBoolean()
   isPaid: boolean;
+
+  @IsOptional()
+  @IsDate()
+  paidAt?: Date;
 
   @IsNotEmpty()
   @IsNumber()
@@ -26,4 +28,12 @@ export class CreatePaymentOrderDto {
   @IsNotEmpty()
   @IsNumber()
   total: number;
+
+  @IsNotEmpty()
+  @IsUUID()
+  transactionId: string;
+
+  @IsOptional()
+  @IsString()
+  paymentId?: string;
 }
