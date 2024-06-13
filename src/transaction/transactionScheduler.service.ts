@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { Transaction } from './entities/transaction.entity';
 import { UserAuctionService } from 'src/user-auction/user-auction.service';
+import { PaymentOrdersService } from 'src/payment-orders/payment-orders.service';
 
 @Injectable()
 export class TransactionSchedulerService {
@@ -12,6 +13,7 @@ export class TransactionSchedulerService {
   constructor(
     @InjectModel(Transaction) private transactionModel: typeof Transaction,
     private readonly userAuctionService: UserAuctionService,
+    private readonly paymentOrdersService: PaymentOrdersService,
   ) {}
 
   @Cron('*/5 * * * * *') // Runs every 5 seconds for demonstration purposes
@@ -23,11 +25,13 @@ export class TransactionSchedulerService {
       const endedAuctions = await this.transactionModel.findAll({
         where: {
           endDate: {
-            [Op.lt]: now,
+            [Op.lte]: now,
           },
           active: true,
         },
       });
+
+      console.log('done each 5 seconds');
 
       for (const transaction of endedAuctions) {
         try {
@@ -41,6 +45,19 @@ export class TransactionSchedulerService {
 
           transaction.active = false;
           await transaction.save();
+
+          if (highestBid && highestBid.user) {
+            await this.paymentOrdersService.create(
+              {
+                transactionId: transaction.id,
+                isPaid: false,
+                tax: 12,
+                total: highestBid.value,
+                subTotal: highestBid.value,
+              },
+              highestBid.user.id,
+            );
+          }
         } catch (error) {
           this.logger.error(
             `Failed to process transaction ${transaction.id}: ${error.message}`,
