@@ -73,6 +73,13 @@ export class Transaction extends Model {
   })
   transactionType: string;
 
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  winnerId?: string;
+
   @ApiProperty({
     example: 'uuid',
     description: 'The unique identifier for the product',

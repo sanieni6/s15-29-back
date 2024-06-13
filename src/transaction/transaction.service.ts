@@ -20,8 +20,8 @@ import { CreatePaymentOrderDto } from 'src/payment-orders/dto/create-payment-ord
 import { PaymentOrder } from 'src/payment-orders/entities/payment-order.entity';
 
 //Luis
-//evalua hora final con hora actual --> funcion
-// servicio buscar puja mas alta
+//evalua hora final con hora actual --> funcion -----done
+// servicio buscar puja mas alta  ----done
 // nuevo servicio
 // una ves terminada la fecha limite enviar la ruta de la pasarela de pagos, usar servicio que busque puja mas alta de user-transaccion, tambien crea la orden con estado false hasta terminado el pago.
 
@@ -174,6 +174,30 @@ export class TransactionService {
     }
   }
 
+  async remainingAuctionTime(id: string): Promise<string> {
+    try{
+      const transaction = await this.transactionModel.findByPk(id);
+      if (!transaction) {
+        throw new NotFoundException('Transaction not found');
+      }
+      const now = new Date();
+      const endTime = new Date(transaction.endDate);
+      const remainingTime = endTime.getTime() - now.getTime();
+      const remainingSeconds = Math.floor((remainingTime / 1000) % 60);
+    const remainingMinutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+    const remainingHours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+    const remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+    return `${remainingDays} days, ${remainingHours} hours, ${remainingMinutes} minutes, ${remainingSeconds} seconds`;
+
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        `Error getting the end time`,
+         HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+        
   async findByUserId(userId: string) {
     try {
       const transactions = await this.transactionModel.findAll({
